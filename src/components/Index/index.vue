@@ -7,10 +7,10 @@ import Video from "./Video/index.vue";
 import PicShow from "./PicShow/index.vue";
 import Reservation from "./Reservation/index.vue";
 import type { IconItem } from "./LeftIcon/types";
+import type {Emits,Props} from "./types.ts";
 const currentShowApplication = ref<string>(""); //当前展示的应用
-const videoCanPlay = ref<boolean>(false); //视频是否可以播放
-const videoEnded = ref<boolean>(localStorage.getItem("videoEnded") === "true"); //视频是否播放结束
-const enterVideoRef = ref<HTMLVideoElement | null>(null); //进入视频
+const emits = defineEmits<Emits>()
+const props = defineProps<Props>();
 const handleIconClick = (icon: IconItem) => {
   currentShowApplication.value = icon.key;
 };
@@ -24,26 +24,15 @@ const openReservation = () => {
 // 打开最新福利活动
 const openActivity = () => {
   window.open(
-    "https://cf.qq.com/cp/a20241224jansecond/pc/index.shtml",
-    "_blank"
+      "https://cf.qq.com/cp/a20241224jansecond/pc/index.shtml",
+      "_blank"
   );
 };
-//重新播放视频
+
+
 const reVideo = () => {
-  videoEnded.value = false;
-  enterVideoRef.value?.play();
-};
-// 视频可以播放
-const handleVideoCanPlay = () => {
-  videoCanPlay.value = true;
-  enterVideoRef.value?.play();
-};
-// 视频播放结束
-const handleVideoEnded = () => {
-  videoEnded.value = true;
-  //存储播放结果
-  localStorage.setItem("videoEnded", "true");
-};
+  emits("play")
+}
 </script>
 
 <template>
@@ -57,9 +46,9 @@ const handleVideoEnded = () => {
       <div class="content" v-show="currentShowApplication">
         <!-- 穿越火线 -->
         <Crossfire
-          v-if="currentShowApplication === 'crossfire'"
-          @close="commonClose"
-          @openReservation="openReservation"
+            v-if="currentShowApplication === 'crossfire'"
+            @close="commonClose"
+            @openReservation="openReservation"
         />
         <!-- 音乐 -->
         <Music v-if="currentShowApplication === 'music'" @close="commonClose" />
@@ -67,13 +56,13 @@ const handleVideoEnded = () => {
         <Video v-if="currentShowApplication === 'video'" @close="commonClose" />
         <!-- 图片 -->
         <PicShow
-          v-if="currentShowApplication === 'picShow'"
-          @close="commonClose"
+            v-if="currentShowApplication === 'picShow'"
+            @close="commonClose"
         />
         <!-- 预约 -->
         <Reservation
-          v-if="currentShowApplication === 'reservation'"
-          @close="commonClose"
+            v-if="currentShowApplication === 'reservation'"
+            @close="commonClose"
         />
       </div>
       <!-- 登录信息 -->
@@ -90,17 +79,6 @@ const handleVideoEnded = () => {
         </div>
       </div>
     </div>
-    <!-- 进入视频 -->
-    <video
-      v-show="!videoEnded"
-      ref="enterVideoRef"
-      class="enter_video"
-      :controls="false"
-      muted
-      src="@/assets/video/enter.mp4"
-      @canplay="handleVideoCanPlay"
-      @ended="handleVideoEnded"
-    ></video>
   </div>
 </template>
 
