@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import {nextTick, onMounted, ref} from "vue";
+import {ref} from "vue";
 import Index from "./components/Index/index.vue";
-import Video from "./components/Index/Video/index.vue";
 const videoEnded = ref<boolean>(localStorage.getItem("videoEnded") === "true"); //视频是否播放结束
 const videoCanPlay = ref<boolean>(false); //视频是否可以播放
 const enterVideoRef = ref<HTMLVideoElement | null>(null); //进入视频

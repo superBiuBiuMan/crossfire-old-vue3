@@ -10,7 +10,7 @@ import type { IconItem } from "./LeftIcon/types";
 import type {Emits,Props} from "./types.ts";
 const currentShowApplication = ref<string>(""); //当前展示的应用
 const emits = defineEmits<Emits>()
-const props = defineProps<Props>();
+defineProps<Props>();
 const handleIconClick = (icon: IconItem) => {
   currentShowApplication.value = icon.key;
 };
