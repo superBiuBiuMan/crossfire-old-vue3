@@ -110,6 +110,10 @@ const handleVideoEnded = () => {
   width: 100%;
   height: 100%;
   background-image: url("@/assets/bg/bg.jpg");
+  //移动端
+  @media screen and (max-width: 750px) {
+    background-image: url("@/assets/bg/bgMobile.jpg");
+  }
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -126,6 +130,13 @@ const handleVideoEnded = () => {
     left: 390px;
     width: 1112px;
     height: 808px;
+    //移动端
+    @media screen and (max-width: 750px) {
+      top: 260px;
+      width: 750px;
+      left: 0;
+      height: 1011px;
+    }
     //遮罩背景
     &::after {
       content: "";
@@ -151,6 +162,9 @@ const handleVideoEnded = () => {
       background-repeat: no-repeat;
       background-size: 100% 100%;
       cursor: pointer;
+      @media screen and (max-width: 750px) {
+        bottom:70px;
+      }
     }
 
     // 当前预约人数
@@ -166,6 +180,9 @@ const handleVideoEnded = () => {
       background-repeat: no-repeat;
       background-size: 100% 100%;
       cursor: pointer;
+      @media screen and (max-width: 750px) {
+        bottom:70px;
+      }
       .appointment_count {
         display: flex;
         align-items: center;
