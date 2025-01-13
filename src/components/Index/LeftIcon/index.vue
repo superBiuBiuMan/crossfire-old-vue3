@@ -58,7 +58,7 @@ const iconsShow = computed(() => {
 // 点击图标
 const handleClick = (icon: IconItem) => {
   if (icon.key === "ie") {
-    window.open("https://cf.qq.com/main.shtml", "_blank");
+    window.open("https://dreamlove.top", "_blank");
   } else if (icon.key === "qq") {
     window.open("https://qq.com", "_blank");
   } else {

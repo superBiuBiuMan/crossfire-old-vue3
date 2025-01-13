@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import type { MusicInfo } from "./types";
 import type { ApplicationCommonEmits } from "../types";
 import { formatTime, throttle } from "./methods";
+import Wave from "./wave/index.vue";
 const emits = defineEmits<ApplicationCommonEmits>();
+const waveRef = ref<any>(); // 音波
 const showMusicList = ref<boolean>(true); //是否显示音乐列表
 const audioRef = ref<HTMLAudioElement | null>(null); //音频元素
 const isPlay = ref<boolean>(false); //是否播放
@@ -46,8 +48,7 @@ const musicList = ref<MusicInfo[]>([
   {
     index: 5,
     name: "《穿越火线》游戏主题曲",
-    url: new URL(`@/assets/music/《穿越火线》游戏主题曲.mp3`, import.meta.url)
-      .href,
+    url: new URL(`@/assets/music/crossfire.mp3`, import.meta.url).href,
     // url: "https://cf.lv.game.qq.com/dis_kt_1587e1a11e613382719dfea73b2d0595_1735888214/0b535macsaaau4akiwtx4zt6p26dfhvqakia.f0.mp3",
     time: "03:27",
     currentTime: 0,
@@ -73,11 +74,13 @@ const closeMusic = () => {
 //播放音乐
 const playMusic = () => {
   isPlay.value = true;
+  waveRef.value?.start();
   audioRef.value?.play();
 };
 //暂停音乐
 const pauseMusic = () => {
   isPlay.value = false;
+  waveRef.value?.stop();
   audioRef.value?.pause();
 };
 //重播(重置播放)
@@ -96,8 +99,7 @@ const muteMusic = () => {
 //音量 todo 你也可以使用节流
 const changeVolume = (e: any) => {
   //归一化
-  const value = Math.round(Number(e.target.value) / 100);
-  audioRef.value!.volume = value;
+  audioRef.value!.volume = Math.round(Number(e.target.value) / 100);
 };
 //切换播放音乐
 const switchPlayMusic = (item: MusicInfo) => {
@@ -184,11 +186,10 @@ const onAudioEnded = () => {
       <!-- 音符 -->
       <div class="music-note">
         <div class="header">{{ formatTime(currentMusicInfo.currentTime) }}</div>
-        <div class="content">律动</div>
-        <div class="footer">
-          正在播放{{ currentMusicInfo?.name }}{{ currentMusicInfo.duration }}
+        <div class="content">
+          <Wave ref="waveRef" :length="20" :speed="800" />
         </div>
-        <div style="color: red">长{{ progressBarWidth }}</div>
+        <div class="footer">正在播放{{ currentMusicInfo?.name }}</div>
       </div>
       <!-- 音乐播放进度 -->
       <div class="music-progress">
@@ -359,7 +360,6 @@ const onAudioEnded = () => {
         color: #9dfe9d;
       }
       .content {
-        background-color: pink;
         height: 88px;
       }
       .footer {
@@ -609,6 +609,7 @@ const onAudioEnded = () => {
             flex: 1;
           }
           &_time {
+            padding-right: 16px;
           }
         }
       }
