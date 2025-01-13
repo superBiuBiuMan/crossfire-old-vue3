@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ApplicationCommonEmits } from "../types";
-const emits = defineEmits<ApplicationCommonEmits>();
+import type { CrossfireEmits } from "./types";
+const emits = defineEmits<CrossfireEmits>();
 const closeCrossfire = () => {
   emits("close");
 };
@@ -23,6 +23,10 @@ const handleTopBtnClick = (key: string) => {
       window.open("https://kf.qq.com");
       break;
   }
+};
+// 预约按钮点击
+const handleReservationBtnClick = () => {
+  emits("openReservation");
 };
 </script>
 
@@ -63,7 +67,7 @@ const handleTopBtnClick = (key: string) => {
       ></div>
     </div>
     <!-- 预约按钮 -->
-    <div class="reservationBtn">
+    <div class="reservationBtn" @click="handleReservationBtnClick">
       <div class="shiny"></div>
     </div>
     <!-- 关闭按钮 -->

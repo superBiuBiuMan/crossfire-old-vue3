@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { ApplicationCommonEmits } from "../types";
+import { throttle } from "../Music/methods";
 const emits = defineEmits<ApplicationCommonEmits>();
 const videoRef = ref<HTMLVideoElement | null>(null);
 const isPlay = ref<boolean>(false); //是否播放
 const isMute = ref<boolean>(false); //是否静音
 const canPlay = ref<boolean>(false); //是否可以播放
+const progressBarWidth = ref<number>(0); //进度条宽度(进度条设置的宽度为372px,所以当为372的时候即占满进度条了)
 //视频列表
 const vidoeList = ref([
   {
@@ -88,16 +90,49 @@ const handlePrevOrNext = (type: "prev" | "next") => {
     };
   }
 };
+// 重播
+const resetVideo = () => {
+  canPlay.value = false;
+  isMute.value = false;
+  handlePause();
+  videoRef.value!.currentTime = 0;
+  videoRef.value!.muted = false;
+};
 //切换视频
 const handleSwitchVideo = (item: any) => {
-  handlePause();
-  currentVideoInfo.value = item;
+  resetVideo();
+  currentVideoInfo.value = {
+    ...item,
+    currentTime: 0,
+  };
+  //todo 需要等待音频加载完成,当然你也可以使用监听的方式去实现
+  let timer = setInterval(() => {
+    if (canPlay.value) {
+      clearInterval(timer);
+      handlePlay();
+    }
+  }, 700);
 };
 // 进度条
 const changeProgress = (e: any) => {
   console.log("e.target.value", e.target.value);
-
   videoRef.value!.currentTime = Math.round(e.target.value);
+};
+// 视频时间更新
+const onVideoTimeupdate = throttle((e: any) => {
+  const { currentTime, duration } = e.target;
+  currentVideoInfo.value.currentTime = currentTime;
+  //更新进度条,20为距离补偿,因为图片上有一个22px的小圆球
+  progressBarWidth.value = Math.ceil((currentTime / duration) * 372) + 22;
+  console.log("progressBarWidth.value", progressBarWidth.value);
+}, 200);
+// 视频结束
+const onVideoEnded = () => {
+  handlePrevOrNext("next");
+};
+// 重播
+const handleReset = () => {
+  videoRef.value!.currentTime = 0;
 };
 </script>
 
@@ -105,14 +140,13 @@ const changeProgress = (e: any) => {
   <div class="videoPlay">
     <div class="header">
       <div class="logo"></div>
-      <div class="title" style="color: red">
-        {{ currentVideoInfo.name }}{{ currentVideoInfo.duration }}
-        {{ currentVideoInfo.currentTime }}
+      <div class="title">
+        {{ currentVideoInfo.name }}
       </div>
       <div class="close">
         <div class="close_min"></div>
         <div class="close_max"></div>
-        <div class="close_close"></div>
+        <div class="close_close" @click="emits('close')"></div>
       </div>
     </div>
     <div class="content">
@@ -125,6 +159,8 @@ const changeProgress = (e: any) => {
           :value="currentVideoInfo.currentTime"
           controlslist="nodownload"
           @canplay="handleCanPlay"
+          @ended="onVideoEnded"
+          @timeupdate="onVideoTimeupdate"
         ></video>
       </div>
       <!-- 列表 -->
@@ -154,7 +190,7 @@ const changeProgress = (e: any) => {
           <!-- 暂停 -->
           <div class="pause" v-show="isPlay" @click="handlePause"></div>
           <!-- 重播 -->
-          <div class="again"></div>
+          <div class="again" @click="handleReset"></div>
         </div>
         <!-- 上一首 下一首   -->
         <div class="prev">
@@ -165,7 +201,10 @@ const changeProgress = (e: any) => {
         <!-- 音乐播放进度 -->
         <div class="music-progress">
           <!-- 通过设置这个的宽度来达到进度条的效果 -->
-          <div class="progress-bar"></div>
+          <div
+            class="progress-bar"
+            :style="{ width: `${progressBarWidth}px` }"
+          ></div>
           <!-- 进度条 -->
           <div class="range-box">
             <input
@@ -173,6 +212,7 @@ const changeProgress = (e: any) => {
               class="input-range"
               :min="0"
               :max="currentVideoInfo.duration"
+              :value="currentVideoInfo.currentTime"
               @input="changeProgress"
             />
           </div>
@@ -240,6 +280,10 @@ const changeProgress = (e: any) => {
         width: 18px;
         height: 100%;
         background: url("@/assets/control/close-btn.png") no-repeat;
+        cursor: pointer;
+        &:hover {
+          filter: brightness(1.3);
+        }
       }
     }
   }
@@ -349,6 +393,7 @@ const changeProgress = (e: any) => {
           width: 100%;
           margin-top: 2px;
         }
+        // 进度条的滑块样式
         .input-range::-webkit-slider-thumb {
           appearance: none;
           width: 44px;

@@ -101,11 +101,12 @@ const changeVolume = (e: any) => {
 };
 //切换播放音乐
 const switchPlayMusic = (item: MusicInfo) => {
+  resetMusic();
+
   currentMusicInfo.value = {
     ...item,
     currentTime: 0,
   };
-  resetMusic();
   //todo 需要等待音频加载完成,当然你也可以使用监听的方式去实现
   let timer = setInterval(() => {
     if (canPlay.value) {
@@ -153,9 +154,9 @@ const changeProgress = (e: any) => {
 const onAudioTimeupdate = throttle((e: any) => {
   const { currentTime, duration } = e.target;
   currentMusicInfo.value.currentTime = currentTime;
-  //更新进度条
-  progressBarWidth.value = Math.ceil((currentTime / duration) * 372);
-}, 800);
+  //更新进度条,20为距离补偿,因为图片上有一个22px的小圆球
+  progressBarWidth.value = Math.ceil((currentTime / duration) * 372) + 22;
+}, 200);
 // 音频结束
 const onAudioEnded = () => {
   prevOrNextMusic("next");

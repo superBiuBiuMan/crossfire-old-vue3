@@ -1,0 +1,22 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+/* 确保应用在任何屏幕尺寸下都保持1920x1080的显示比例 */
+/* 始终保持应用在视窗中居中显示 */
+/* 适合全屏展示的应用，如游戏界面或展示页面 */
+$design-width: 1920px;
+$design-height: 1080px;
+
+#app {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: $design-width;
+  height: $design-height;
+  margin: calc(#{$design-height} / -2) 0 0 calc(#{$design-width} / -2);
+  will-change: transform;
+}
