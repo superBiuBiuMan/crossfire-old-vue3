@@ -10,7 +10,8 @@ export const formatTime = (time: number | string | undefined) => {
 export function throttle(func: Function, wait: number) {
   let timeout: any = null;
   return function () {
-    let context = this;
+    //@ts-ignore
+    let context = this ;
     let args = arguments;
     if (!timeout) {
       timeout = setTimeout(() => {

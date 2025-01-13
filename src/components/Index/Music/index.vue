@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import {  ref } from "vue";
 import type { MusicInfo } from "./types";
 import type { ApplicationCommonEmits } from "../types";
 import { formatTime, throttle } from "./methods";

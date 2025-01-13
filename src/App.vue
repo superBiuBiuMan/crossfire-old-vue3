@@ -1,38 +1,13 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import {nextTick, onMounted} from "vue";
 import Index from "./components/Index/index.vue";
-const keepRatio = () => {
-  let ratio = 0; // 定义一个缩放比例
-  let screen = window.screen; // 获取窗口对象
-  let ua = navigator.userAgent.toLowerCase();
-  if (window.devicePixelRatio !== undefined) {
-    ratio = window.devicePixelRatio; // 像素大小的比例
-  } else if (ua.indexOf("msie")) {
-    if (screen.deviceXDPI && screen.logicalXDPI) {
-      ratio = screen.deviceXDPI / screen.logicalXDPI;
-    }
-  } else if (
-    window.outerWidth !== undefined &&
-    window.innerWidth !== undefined
-  ) {
-    ratio = window.outerWidth / window.innerWidth; // 外部比例/内部比例：缩放比例
-  }
-  if (ratio) {
-    ratio = Math.round(ratio * 100);
-  }
-  this.ratio = (ratio / 100).toFixed(2);
-  document.body.style.zoom = 1 / this.ratio; // 窗口视图除以缩放比例：即缩放还原
-};
 onMounted(() => {
-  // keepRatio();
-  // window.addEventListener("resize", () => {
-  //   //监听窗口缩放
-  //   keepRatio();
-  // });
-  coverBoxToViewport("#app");
+  nextTick(() => {
+    coverBoxToViewport("#app");
+  })
 });
 function coverBoxToViewport(boxSelector: string) {
-  const box = document.querySelector(boxSelector);
+  const box = document.querySelector(boxSelector) as any;
   if (!box) {
     console.error("Box not found with the given selector.");
     return;

@@ -1,60 +1,60 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import type { IconItem, Emits } from "./types";
 const emits = defineEmits<Emits>();
+const getImageUrl = (name: string) => {
+  return new URL(`./images/${name}`, import.meta.url).href;
+};
 const icons = ref<IconItem[]>([
   {
-    normal: "./images/crossfire.png",
-    selected: "./images/crossfire_select.png",
+    normal: "crossfire.png",
+    selected: "crossfire_select.png",
     alt: "穿越火线",
     width: 64,
     height: 64,
     key: "crossfire",
   },
   {
-    normal: "./images/audio.png",
-    selected: "./images/audio_select.png",
+    normal: "audio.png",
+    selected: "audio_select.png",
     alt: "音乐播放器",
     key: "music",
   },
   {
-    normal: "./images/play.png",
-    selected: "./images/play_select.png",
+    normal: "play.png",
+    selected: "play_select.png",
     alt: "视频播放器",
     key: "video",
   },
   {
-    normal: "./images/pic.png",
-    selected: "./images/pic_select.png",
+    normal: "pic.png",
+    selected: "pic_select.png",
     alt: "图片查看器",
     key: "picShow",
   },
   {
-    normal: "./images/ie.png",
-    selected: "./images/ie_select.png",
+    normal: "ie.png",
+    selected: "ie_select.png",
     alt: "IE浏览器",
     width: 70,
     height: 64,
     key: "ie",
   },
   {
-    normal: "./images/qq.png",
-    selected: "./images/qq.png",
+    normal: "qq.png",
+    selected: "qq.png",
     alt: "QQ",
     width: 40,
     height: 70,
     key: "qq",
   },
-]);
-const iconsShow = computed(() => {
-  return icons.value.map((icon) => {
-    return {
-      ...icon,
-      normal: new URL(icon.normal, import.meta.url).href,
-      selected: new URL(icon.selected, import.meta.url).href,
-    };
-  });
-});
+].map((item:any) => {
+  return {
+    ...item,
+    normal: getImageUrl(item.normal),
+    selected: getImageUrl(item.selected),
+  }
+}));
 // 点击图标
 const handleClick = (icon: IconItem) => {
   if (icon.key === "ie") {
@@ -69,7 +69,7 @@ const handleClick = (icon: IconItem) => {
 
 <template>
   <div class="leftIcon">
-    <div v-for="(icon, index) in iconsShow" :key="index" class="icon-wrapper">
+    <div v-for="(icon, index) in icons" :key="index" class="icon-wrapper">
       <img
         :src="icon.normal"
         :style="{ width: icon.width + 'px', height: icon.height + 'px' }"

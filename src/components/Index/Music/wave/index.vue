@@ -17,7 +17,7 @@ const waveRef = ref<HTMLElement | null>(null);
 const divCount = ref(0);
 
 const divs = computed(() => {
-  return Array.from({ length: divCount.value }, (_, index) => {
+  return Array.from({ length: divCount.value }, () => {
     //随机生成minHeight和maxHeight和持续时间
     //同时也随机minHeight和maxHeight谁更大,
     // const minHeight = 15 + Math.random() * 35;
